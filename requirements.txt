@@ -1,1 +1,8 @@
-   "sagemaker>=2.200.0`npandas`nscikit-learn`nxgboost`nboto3`njoblib" | Out-File -FilePath requirements.txt -Encoding utf8
+sagemaker>=2.200.0
+pandas
+scikit-learn
+xgboost
+boto3
+joblib
+s3fs
+pyarrow

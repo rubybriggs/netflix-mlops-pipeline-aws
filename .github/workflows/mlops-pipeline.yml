@@ -2,19 +2,26 @@ name: Trigger SageMaker MLOps Pipeline
 
 on:
   push:
-    branches:
-      - main
-  workflow_dispatch: # Allows manual triggering from the GitHub UI
+    branches: [ main ]
+    # Only retrain when ML code/config actually changes (NOT docs/requirements)
+    paths:
+      - 'scripts/**'
+      - 'config/**'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (verify auth+deps, NO paid pipeline)?'
+        required: false
+        default: 'true'
 
 jobs:
   trigger-pipeline:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -25,7 +32,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Trigger SageMaker Pipeline
+      - name: Verify AWS + SDK wiring (free)
+        if: github.event.inputs.dry_run == 'true'
         run: |
-          echo "Starting pipeline execution..."
-          python scripts/build_pipeline.py
+          python -c "import sagemaker, boto3; boto3.client('sagemaker').list_pipelines(MaxResults=1); print('✅ Auth + deps OK (dry run, no pipeline launched)')"
+
+      - name: Trigger SageMaker Pipeline (real retrain)
+        if: github.event.inputs.dry_run != 'true'
+        run: python scripts/build_pipeline.py
