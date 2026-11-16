@@ -3,7 +3,7 @@ name: Trigger SageMaker MLOps Pipeline
 on:
   push:
     branches: [ main ]
-    # Only retrain when ML code/config actually changes (NOT docs/requirements)
+    # Only trigger when ML code actually changes (saves money on docs/requirements updates)
     paths:
       - 'scripts/**'
       - 'config/**'
