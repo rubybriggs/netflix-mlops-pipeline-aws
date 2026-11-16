@@ -1,1 +1,0 @@
-"Arn": "arn:aws:iam::592444418608:policy/SageMakerMLOpsLeastPrivilegePolicy"

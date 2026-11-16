@@ -1,0 +1,11 @@
+ERROR: "value" parameter must be a scalar, dict or Series, but you passed a "Index"
+
+TRACEBACK:
+Traceback (most recent call last):
+  File "/opt/ml/processing/input/code/preprocessing.py", line 30, in <module>
+    df['record_id'] = df['show_id'].fillna(df.index.astype(str))
+  File "/miniconda3/lib/python3.9/site-packages/pandas/core/series.py", line 4517, in fillna
+    return super().fillna(
+  File "/miniconda3/lib/python3.9/site-packages/pandas/core/generic.py", line 6051, in fillna
+    raise TypeError(
+TypeError: "value" parameter must be a scalar, dict or Series, but you passed a "Index"
